@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Islam Electronics — Installment & Accounts</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<!-- ===== AUTH ===== -->
+<div id="auth-screen" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="icon"><i class="ti ti-building-store"></i></div>
+        <h1>Islam Electronics</h1>
+      </div>
+      <h2>Admin login</h2>
+      <p class="sub">Apne account mein sign in karein</p>
+      <div id="login-error" class="error-msg"></div>
+      <div class="field">
+        <label>Username</label>
+        <input id="inp-user" type="text" placeholder="admin" autocomplete="username" />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input id="inp-pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button class="btn-primary" onclick="doLogin()">Sign in</button>
+      <p class="auth-hint">Demo: admin / admin123</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app-screen" class="app-wrap hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="icon" style="width:34px;height:34px;background:var(--accent-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:17px">
+        <i class="ti ti-building-store"></i>
+      </div>
+      <span>Islam Electronics</span>
+    </div>
+    <div class="nav-section">Main</div>
+    <a class="nav-link" data-page="dashboard" onclick="Router.go('dashboard')">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
+    </a>
+    <div class="nav-section">Business</div>
+    <a class="nav-link" data-page="customers" onclick="Router.go('customers')">
+      <i class="ti ti-users"></i> Customers
+    </a>
+    <a class="nav-link" data-page="installments" onclick="Router.go('installments')">
+      <i class="ti ti-receipt"></i> Installments
+    </a>
+    <a class="nav-link" data-page="inventory" onclick="Router.go('inventory')">
+      <i class="ti ti-packages"></i> Inventory
+    </a>
+    <a class="nav-link" data-page="accounts" onclick="Router.go('accounts')">
+      <i class="ti ti-coin"></i> Accounts
+    </a>
+    <a class="nav-link" data-page="whatsapp" onclick="Router.go('whatsapp')">
+      <i class="ti ti-brand-whatsapp"></i> WhatsApp
+    </a>
+    <div class="sidebar-footer">
+      <div class="logout-btn" onclick="doLogout()">
+        <i class="ti ti-logout"></i> Logout
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-user">
+        <div class="avatar">AD</div>
+        <span>Admin</span>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total installments</div>
+            <div class="stat-value" id="dash-sales">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Outstanding balance</div>
+            <div class="stat-value" id="dash-outstanding">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Low stock items</div>
+            <div class="stat-value" id="dash-stock" style="color:var(--warning)">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Overdue accounts</div>
+            <div class="stat-value" id="dash-overdue" style="color:var(--danger)">—</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Recent installments</span>
+            <button class="btn btn-blue" onclick="Router.go('installments')"><i class="ti ti-arrow-right"></i> View all</button>
+          </div>
+          <table>
+            <thead><tr><th>Customer</th><th>Product</th><th>Monthly</th><th>Progress</th><th>Status</th></tr></thead>
+            <tbody id="dash-inst-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS -->
+      <div id="page-customers" class="page">
+        <div class="flex gap-2 items-center mb-2">
+          <button class="btn btn-blue" onclick="Pages.customers.add()"><i class="ti ti-plus"></i> Add customer</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Name</th><th>Phone</th><th>City</th><th>CNIC</th><th>Actions</th></tr></thead>
+            <tbody id="cust-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INSTALLMENTS -->
+      <div id="page-installments" class="page">
+        <div class="flex gap-2 items-center mb-2">
+          <button class="btn btn-blue" onclick="Pages.installments.add()"><i class="ti ti-plus"></i> New installment</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Customer</th><th>Product</th><th>Total</th><th>Monthly</th><th>Paid</th><th>Remaining</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="inst-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- INVENTORY -->
+      <div id="page-inventory" class="page">
+        <div class="flex gap-2 items-center mb-2">
+          <button class="btn btn-blue" onclick="Pages.inventory.add()"><i class="ti ti-plus"></i> Add product</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+            <tbody id="inv-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ACCOUNTS -->
+      <div id="page-accounts" class="page">
+        <div class="stats-grid" style="margin-bottom:1rem">
+          <div class="stat-card">
+            <div class="stat-label">Total income</div>
+            <div class="stat-value" id="acc-income" style="color:var(--success)">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total expense</div>
+            <div class="stat-value" id="acc-expense" style="color:var(--danger)">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net balance</div>
+            <div class="stat-value" id="acc-balance">—</div>
+          </div>
+        </div>
+        <div class="flex gap-2 items-center mb-2">
+          <button class="btn btn-blue" onclick="Pages.accounts.add()"><i class="ti ti-plus"></i> Add entry</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead>
+            <tbody id="acc-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- WHATSAPP -->
+      <div id="page-whatsapp" class="page">
+        <div class="wa-layout">
+          <div class="wa-contacts" id="wa-list"></div>
+          <div class="wa-chat">
+            <div class="wa-chat-header">
+              <div class="wa-avatar" id="wa-chat-avatar" style="background:var(--success-bg);color:var(--success-text)">—</div>
+              <div>
+                <div style="font-size:14px;font-weight:500" id="wa-chat-name">Contact select karein</div>
+                <div style="font-size:12px;color:var(--text3)" id="wa-chat-phone"></div>
+              </div>
+            </div>
+            <div class="wa-messages" id="wa-msgs">
+              <div style="text-align:center;color:#aaa;font-size:13px;margin-top:2rem">Left side se contact select karein</div>
+            </div>
+            <div class="wa-input-row">
+              <input class="wa-input" id="wa-inp" placeholder="Message likhein..." onkeydown="if(event.key==='Enter') Pages.whatsapp.send()" />
+              <button class="wa-send" onclick="Pages.whatsapp.send()"><i class="ti ti-send"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /app-wrap -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Customer modal -->
+<div id="cust-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="cust-modal-title">New customer</h3>
+      <button class="close-btn" onclick="hideModal('cust-modal')">&times;</button>
+    </div>
+    <form id="cust-form" onsubmit="return false">
+      <input type="hidden" id="cust-id-hidden" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name *</label>
+          <input id="cust-name" type="text" placeholder="Ali Hassan" />
+        </div>
+        <div class="form-group">
+          <label>Phone *</label>
+          <input id="cust-phone" type="text" placeholder="03001234567" />
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input id="cust-city" type="text" placeholder="Lahore" />
+        </div>
+        <div class="form-group">
+          <label>CNIC</label>
+          <input id="cust-cnic" type="text" placeholder="35201-1234567-1" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Address</label>
+        <textarea id="cust-address" placeholder="Ghar ka address..."></textarea>
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('cust-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="Pages.customers.save()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Installment modal -->
+<div id="inst-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="inst-modal-title">New installment</h3>
+      <button class="close-btn" onclick="hideModal('inst-modal')">&times;</button>
+    </div>
+    <form id="inst-form" onsubmit="return false">
+      <div class="form-group">
+        <label>Customer *</label>
+        <select id="inst-customer"></select>
+      </div>
+      <div class="form-group">
+        <label>Product *</label>
+        <select id="inst-product"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Total price (₨) *</label>
+          <input id="inst-total" type="number" placeholder="85000" />
+        </div>
+        <div class="form-group">
+          <label>Down payment (₨)</label>
+          <input id="inst-down" type="number" placeholder="20000" />
+        </div>
+        <div class="form-group">
+          <label>Months *</label>
+          <input id="inst-months" type="number" placeholder="12" min="1" />
+        </div>
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('inst-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="Pages.installments.save()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Installment view modal -->
+<div id="inst-view-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Installment detail</h3>
+      <button class="close-btn" onclick="hideModal('inst-view-modal')">&times;</button>
+    </div>
+    <div id="inst-view-body"></div>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('inst-view-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Inventory modal -->
+<div id="inv-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="inv-modal-title">New product</h3>
+      <button class="close-btn" onclick="hideModal('inv-modal')">&times;</button>
+    </div>
+    <form id="inv-form" onsubmit="return false">
+      <input type="hidden" id="inv-id-hidden" />
+      <div class="form-row">
+        <div class="form-group" style="grid-column:1/-1">
+          <label>Product name *</label>
+          <input id="inv-name" type="text" placeholder="Samsung TV 43 inch" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input id="inv-cat" type="text" placeholder="Electronics" />
+        </div>
+        <div class="form-group">
+          <label>Price (₨) *</label>
+          <input id="inv-price" type="number" placeholder="85000" />
+        </div>
+        <div class="form-group">
+          <label>Stock</label>
+          <input id="inv-stock" type="number" placeholder="10" />
+        </div>
+        <div class="form-group">
+          <label>Unit</label>
+          <input id="inv-unit" type="text" placeholder="pcs" />
+        </div>
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('inv-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="Pages.inventory.save()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Accounts modal -->
+<div id="acc-modal" class="modal-overlay hidden">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add entry</h3>
+      <button class="close-btn" onclick="hideModal('acc-modal')">&times;</button>
+    </div>
+    <form id="acc-form" onsubmit="return false">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input id="acc-date" type="date" />
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="acc-type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <input id="acc-cat" type="text" placeholder="Installment / Rent / Purchase..." />
+        </div>
+        <div class="form-group">
+          <label>Amount (₨) *</label>
+          <input id="acc-amount" type="number" placeholder="5000" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input id="acc-desc" type="text" placeholder="Ali Hassan - June payment" />
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button class="btn" onclick="hideModal('acc-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="Pages.accounts.save()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script src="js/pages.js"></script>
+</body>
+</html>
